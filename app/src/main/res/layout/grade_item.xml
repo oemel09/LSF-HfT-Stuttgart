@@ -4,8 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
+    android:layout_height="wrap_content">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -72,8 +71,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_name"
-            app:layout_constraintTop_toTopOf="@+id/tv_name"
-            >
+            app:layout_constraintTop_toTopOf="@+id/tv_name">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -99,12 +97,11 @@
             android:id="@+id/ll_ects"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/ll_grade">
+            app:layout_constraintTop_toTopOf="@+id/tv_state">
 
             <TextView
                 android:id="@+id/textView9"
@@ -133,12 +130,11 @@
             android:id="@+id/ll_attempt"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/ll_ects">
+            app:layout_constraintTop_toTopOf="@+id/tv_date">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -164,12 +160,11 @@
             android:id="@+id/ll_grade_nr"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/ll_attempt">
+            app:layout_constraintTop_toTopOf="@+id/tv_semester">
 
             <TextView
                 android:id="@+id/textView7"
