@@ -109,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
         // if cookie is still good
         if (prefs.getLong("COOKIE_TIME", -1) > System.currentTimeMillis()) {
             cookie = prefs.getString("COOKIE", "");
-            // TODO: check if we can skip getting the asi or not
-            getAsi();
+            asi = prefs.getString("ASI", "");
+            getGrades();
         } else {
             new FetchData(Order.FIRST) {
                 @Override
@@ -148,6 +148,8 @@ public class MainActivity extends AppCompatActivity {
                 Matcher matcher = pattern.matcher(result);
                 if (matcher.find()) {
                     asi = matcher.group(1);
+                    editor.putString("ASI", asi);
+                    editor.apply();
                     getGrades();
                 } else {
                     Toast.makeText(MainActivity.this, "Couldn't get asi.", Toast.LENGTH_SHORT).show();
