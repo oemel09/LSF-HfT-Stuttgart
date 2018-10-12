@@ -1,7 +1,5 @@
 package de.oemel09.lsf;
 
-
-import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,26 +9,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by Lukas on 11.02.2017.
- * adapter for main view
- */
-
 public class GradeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final String TAG = "PlaylistAdapter";
-
-    private final Activity context;
     private ArrayList<Grade> grades;
 
-    private OnClickListener onClickListener;
-
-    GradeAdapter(Activity context, ArrayList<Grade> grades) {
-        this.context = context;
+    GradeAdapter(ArrayList<Grade> grades) {
         this.grades = grades;
     }
 
-    //ViewHolder inner classes
     private class GradeViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tvName, tvSemester, tvState, tvGrade, tvDate, tvEcts, tvAttempt, tvGradeNr;
@@ -51,7 +37,6 @@ public class GradeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // create a new view
         View v;
         v = LayoutInflater.from(parent.getContext()).inflate(R.layout.grade_item, parent, false);
         return new GradeViewHolder(v);
@@ -75,14 +60,5 @@ public class GradeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemCount() {
         return grades.size();
-    }
-
-    // the onclickListener interface and it's set method
-    public interface OnClickListener {
-        void onClick(View v, int position);
-    }
-
-    public void setOnClickListener(OnClickListener onClickListener) {
-        this.onClickListener = onClickListener;
     }
 }

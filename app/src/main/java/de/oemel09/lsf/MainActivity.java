@@ -10,7 +10,6 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.jsoup.Jsoup;
@@ -35,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,15 +43,21 @@ import javax.net.ssl.HttpsURLConnection;
 @SuppressLint("StaticFieldLeak")
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
-
     private static final String LSF_LOGIN = "https://lsf.hft-stuttgart.de/qisserver/rds?state=user&type=1&category=auth.login&startpage=portal.vm&breadCrumbSource=portal";
-    private static final String LSF_PRUEFUNGSVERWALTUNG = "https://lsf.hft-stuttgart.de/qisserver/rds?state=change&type=1&moduleParameter=studyPOSMenu&nextdir=change&next=menu.vm&subdir=applications&xml=menu&purge=y&navigationPosition=functions%2CstudyPOSMenu&breadcrumb=studyPOSMenu&topitem=functions&subitem=studyPOSMenu";
-    private static final String LSF_GRADES = "https://lsf.hft-stuttgart.de/qisserver/rds?state=notenspiegelStudent&next=list.vm&nextdir=qispos/notenspiegel/student&createInfos=Y&struct=auswahlBaum&nodeID=auswahlBaum%7Cabschluss%3Aabschl%3D84%2Cstgnr%3D1&expand=0&asi={your_asi_here}#auswahlBaum%7Cabschluss%3Aabschl%3D84%2Cstgnr%3D1";
-    private static String cookie;
-    private static String asi;
+    private static final String LSF_EXAM_ADMINISTRATION = "https://lsf.hft-stuttgart.de/qisserver/rds?state=change&type=1&moduleParameter=studyPOSMenu&nextdir=change&next=menu.vm&subdir=applications&xml=menu&purge=y&navigationPosition=functions%2CstudyPOSMenu&breadcrumb=studyPOSMenu&topitem=functions&subitem=studyPOSMenu";
+    private static final String ASI_PLACEHOLDER = "{your_asi_here}";
+    private static final String LSF_GRADES = "https://lsf.hft-stuttgart.de/qisserver/rds?state=notenspiegelStudent&next=list.vm&nextdir=qispos/notenspiegel/student&createInfos=Y&struct=auswahlBaum&nodeID=auswahlBaum%7Cabschluss%3Aabschl%3D84%2Cstgnr%3D1&expand=0&asi=" + ASI_PLACEHOLDER + "#auswahlBaum%7Cabschluss%3Aabschl%3D84%2Cstgnr%3D1";
+    private static final String LOGGED_IN = "LOGGED_IN";
+    private static final String COOKIE = "COOKIE";
+    private static final String COOKIE_TIME = "COOKIE_TIME";
+    private static final String USERNAME = "USERNAME";
+    private static final String PASSWORD = "PASSWORD";
+    private static final String JSESSION_ID = "JSESSIONID=";
 
-    private static SharedPreferences prefs;
+    private String cookie;
+    private String asi;
+
+    private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
     private GradeAdapter gradesAdapter;
     private ArrayList<Grade> grades;
@@ -67,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         editor = prefs.edit();
-        if (prefs.getBoolean("LOGGED_IN", false)) {
+        if (prefs.getBoolean(LOGGED_IN, false)) {
             setupMain();
         } else {
             setupLogin();
@@ -83,19 +89,19 @@ public class MainActivity extends AppCompatActivity {
         ItemOffsetDecoration itemDecoration = new ItemOffsetDecoration(this, R.dimen.item_offset);
         rvGrades.addItemDecoration(itemDecoration);
         grades = new ArrayList<>();
-        gradesAdapter = new GradeAdapter(this, grades);
+        gradesAdapter = new GradeAdapter(grades);
         rvGrades.setAdapter(gradesAdapter);
         login();
     }
 
     private void setupLogin() {
         setContentView(R.layout.login);
-        if (prefs.getString("USERNAME", null) != null) {
-            ((TextInputEditText) findViewById(R.id.et_username)).setText(prefs.getString("USERNAME", null));
+        if (prefs.getString(USERNAME, null) != null) {
+            ((TextInputEditText) findViewById(R.id.et_username)).setText(prefs.getString(USERNAME, null));
         }
         findViewById(R.id.btn_login).setOnClickListener(v -> {
-            editor.putString("USERNAME", ((TextInputEditText) findViewById(R.id.et_username)).getText().toString());
-            editor.putString("PASSWORD", ((TextInputEditText) findViewById(R.id.et_password)).getText().toString());
+            editor.putString(USERNAME, Objects.requireNonNull(((TextInputEditText) findViewById(R.id.et_username)).getText()).toString());
+            editor.putString(PASSWORD, Objects.requireNonNull(((TextInputEditText) findViewById(R.id.et_password)).getText()).toString());
             editor.apply();
             setupMain();
         });
@@ -104,34 +110,34 @@ public class MainActivity extends AppCompatActivity {
     private void login() {
         dialog = new ProgressDialog(this);
         dialog.setIndeterminate(true);
-        dialog.setMessage("Please wait while loading your grades");
+        dialog.setMessage(getString(R.string.loading_grades));
         dialog.show();
         // if cookie is still good
-        if (prefs.getLong("COOKIE_TIME", -1) > System.currentTimeMillis()) {
-            cookie = prefs.getString("COOKIE", "");
+        if (prefs.getLong(COOKIE_TIME, -1) > System.currentTimeMillis()) {
+            cookie = prefs.getString(COOKIE, "");
             asi = prefs.getString("ASI", "");
             getGrades();
         } else {
             new FetchData(Order.FIRST) {
                 @Override
                 void answer(String result) {
-                    if (!result.contains("Anmeldung fehlgeschlagen")) {
+                    if (!result.contains(getString(R.string.result_login_failed))) {
                         Pattern pattern = Pattern.compile("jsessionid=(.*?)\\?");
                         Matcher matcher = pattern.matcher(result);
                         if (matcher.find()) {
                             cookie = matcher.group(1);
-                            editor.putString("COOKIE", cookie);
-                            editor.putLong("COOKIE_TIME", System.currentTimeMillis() + 28 * 60 * 1000);
-                            editor.putBoolean("LOGGED_IN", true);
+                            editor.putString(COOKIE, cookie);
+                            editor.putLong(COOKIE_TIME, System.currentTimeMillis() + 28 * 60 * 1000);
+                            editor.putBoolean(LOGGED_IN, true);
                             editor.apply();
                             getAsi();
                         } else {
-                            Toast.makeText(MainActivity.this, "Couldn't login", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
                             dialog.cancel();
                         }
                     } else {
-                        Toast.makeText(MainActivity.this, "Couldn't login", Toast.LENGTH_SHORT).show();
-                        editor.putBoolean("LOGGED_IN", false);
+                        Toast.makeText(MainActivity.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
+                        editor.putBoolean(LOGGED_IN, false);
                         editor.apply();
                         setupLogin();
                     }
@@ -152,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                     editor.apply();
                     getGrades();
                 } else {
-                    Toast.makeText(MainActivity.this, "Couldn't get asi.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
                     dialog.cancel();
                 }
             }
@@ -163,7 +169,6 @@ public class MainActivity extends AppCompatActivity {
         new FetchData(Order.THIRD) {
             @Override
             void answer(String result) {
-                Log.i("GRADES", result);
                 parseGrades(result);
             }
         }.execute();
@@ -233,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    static abstract class FetchData extends AsyncTask<String, String, String> {
+    abstract class FetchData extends AsyncTask<String, String, String> {
 
         private URL url;
         private Order order;
@@ -247,11 +252,11 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case SECOND:
-                        target = LSF_PRUEFUNGSVERWALTUNG;
+                        target = LSF_EXAM_ADMINISTRATION;
                         break;
 
                     case THIRD:
-                        target = LSF_GRADES.replace("{your_asi_here}", asi);
+                        target = LSF_GRADES.replace(ASI_PLACEHOLDER, asi);
                         break;
                 }
                 this.url = new URL(target);
@@ -283,17 +288,17 @@ public class MainActivity extends AppCompatActivity {
                 HashMap<String, String> params = new HashMap<>();
                 switch (order) {
                     case FIRST:
-                        params.put("asdf", prefs.getString("USERNAME", null));
-                        params.put("fdsa", prefs.getString("PASSWORD", null));
-                        params.put("submit", "Anmelden");
+                        params.put("asdf", prefs.getString(USERNAME, null));
+                        params.put("fdsa", prefs.getString(PASSWORD, null));
+                        params.put("submit", getString(R.string.submit_value));
                         break;
 
                     case SECOND:
-                        httpsConnection.setRequestProperty("Cookie", "JSESSIONID=" + cookie);
+                        httpsConnection.setRequestProperty(COOKIE, JSESSION_ID + cookie);
                         break;
 
                     case THIRD:
-                        httpsConnection.setRequestProperty("Cookie", "JSESSIONID=" + cookie);
+                        httpsConnection.setRequestProperty(COOKIE, JSESSION_ID + cookie);
                         break;
                 }
 

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">LSF</string>
+    <string name="loading_grades">Please wait while loading your grades</string>
+    <string name="result_login_failed">Anmeldung fehlgeschlagen</string>
+    <string name="submit_value">Anmelden</string>
+    <string name="login_failed">Sorry, we couldn\'t log you in.</string>
 </resources>
