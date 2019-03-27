@@ -59,12 +59,14 @@
                 android:id="@+id/tvDateLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="@string/table_date"/>
 
             <TextView
                 android:id="@+id/tv_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:gravity="end"
                 app:layout_constraintEnd_toEndOf="parent"/>
         </LinearLayout>
