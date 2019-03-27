@@ -1,7 +1,26 @@
 <resources>
     <string name="app_name">LSF</string>
-    <string name="loading_grades">Please wait while loading your grades</string>
+
+    <string name="login_to_lsf">Bei LSF anmelden</string>
+    <string name="password">Passwort</string>
+    <string name="username">Benutzername</string>
+    <string name="login">Login</string>
+
+    <string name="loading">Bitte warten…</string>
     <string name="result_login_failed">Anmeldung fehlgeschlagen</string>
     <string name="submit_value">Anmelden</string>
-    <string name="login_failed">Sorry, we couldn\'t log you in.</string>
+
+    <string name="table_grade">Note:</string>
+    <string name="table_attempt">Versuch:</string>
+    <string name="table_ects">ECTS:</string>
+    <string name="table_exam_number">Prüfungsnr.:</string>
+    <string name="table_date">Datum:</string>
+
+    <string name="no_grade_details">Keine Details verfügbar.</string>
+    <string name="grade_details_grade_label">Deine Note</string>
+    <string name="grade_details_average_label">Durchschnitt</string>
+    <string name="grade_details_attendees_label">Teilnehmer</string>
+
+    <string name="menu_search">Suche</string>
+    <string name="menu_search_hint">Suche Klausuren</string>
 </resources>
