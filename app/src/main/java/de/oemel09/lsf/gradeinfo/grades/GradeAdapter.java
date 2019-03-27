@@ -1,4 +1,4 @@
-package de.oemel09.lsf.grades;
+package de.oemel09.lsf.gradeinfo.grades;
 
 import android.view.LayoutInflater;
 import android.view.View;

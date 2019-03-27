@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -22,15 +23,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.oemel09.lsf.api.LsfLoader;
 import de.oemel09.lsf.api.listeners.LsfRequestListener;
-import de.oemel09.lsf.grades.Grade;
-import de.oemel09.lsf.grades.GradeAdapter;
-import de.oemel09.lsf.grades.details.GradeDetailsActivity;
+import de.oemel09.lsf.gradeinfo.GradeInfo;
+import de.oemel09.lsf.gradeinfo.grades.Grade;
+import de.oemel09.lsf.gradeinfo.grades.GradeAdapter;
+import de.oemel09.lsf.gradeinfo.grades.details.GradeDetailsActivity;
 
 
 public class MainActivity extends AppCompatActivity implements LsfRequestListener,
         GradeAdapter.OnGradeClickListener, SearchView.OnQueryTextListener {
 
-    private static final String LOGGED_IN = "LOGGED_IN";
+    public static final String LOGGED_IN = "LOGGED_IN";
     public static final String USERNAME = "USERNAME";
     public static final String PASSWORD = "PASSWORD";
     public static final String GRADE = "GRADE";
@@ -71,7 +73,16 @@ public class MainActivity extends AppCompatActivity implements LsfRequestListene
     private void setupGradeView() {
         setContentView(R.layout.activity_main);
         lsfLoader = new LsfLoader(this, this);
-        lsfLoader.getGrades(this::allGradesLoaded);
+        lsfLoader.getGrades(gradeInfo -> {
+            fillTextViews(gradeInfo);
+            allGradesLoaded(gradeInfo.getGrades());
+        });
+    }
+
+    private void fillTextViews(GradeInfo gradeInfo) {
+        ((TextView) findViewById(R.id.grade_info_total_average)).setText(gradeInfo.getAverage());
+        ((TextView) findViewById(R.id.grade_info_cp_base_courses)).setText(gradeInfo.getCpBaseCourses());
+        ((TextView) findViewById(R.id.grade_info_cp_main_courses)).setText(gradeInfo.getCpMainCourses());
     }
 
     private void allGradesLoaded(ArrayList<Grade> grades) {

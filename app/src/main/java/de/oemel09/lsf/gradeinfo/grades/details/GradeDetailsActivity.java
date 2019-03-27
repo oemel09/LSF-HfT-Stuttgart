@@ -1,4 +1,4 @@
-package de.oemel09.lsf.grades.details;
+package de.oemel09.lsf.gradeinfo.grades.details;
 
 import android.os.Bundle;
 import android.widget.TextView;
@@ -18,7 +18,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import de.oemel09.lsf.R;
-import de.oemel09.lsf.grades.Grade;
+import de.oemel09.lsf.gradeinfo.grades.Grade;
 
 import static de.oemel09.lsf.MainActivity.GRADE;
 

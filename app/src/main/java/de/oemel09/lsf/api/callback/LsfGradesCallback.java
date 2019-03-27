@@ -4,20 +4,22 @@ import android.content.Context;
 
 import java.util.ArrayList;
 
-import de.oemel09.lsf.api.listeners.LsfGradesSuccessful;
+import de.oemel09.lsf.api.listeners.LsfGradeInfoSuccessful;
 import de.oemel09.lsf.api.listeners.LsfRequestListener;
-import de.oemel09.lsf.grades.Grade;
-import de.oemel09.lsf.grades.GradeParser;
+import de.oemel09.lsf.gradeinfo.grades.Grade;
+import de.oemel09.lsf.gradeinfo.GradeInfo;
+import de.oemel09.lsf.gradeinfo.GradeInfoParser;
+import de.oemel09.lsf.gradeinfo.grades.GradeParser;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
 public class LsfGradesCallback extends LsfCallback {
 
-    private final LsfGradesSuccessful lsfRequestSuccessful;
+    private final LsfGradeInfoSuccessful lsfRequestSuccessful;
 
     public LsfGradesCallback(Context context, LsfRequestListener lsfRequestListener,
-                             LsfGradesSuccessful lsfRequestSuccessful) {
+                             LsfGradeInfoSuccessful lsfRequestSuccessful) {
         super(context, lsfRequestListener);
         this.lsfRequestSuccessful = lsfRequestSuccessful;
     }
@@ -26,8 +28,10 @@ public class LsfGradesCallback extends LsfCallback {
     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
         if (response.isSuccessful() && response.body() != null) {
             String content = responseToString(response.body());
+            GradeInfo gradeInfo = new GradeInfoParser().parse(content);
             ArrayList<Grade> grades = new ArrayList<>(new GradeParser().parse(content));
-            lsfRequestSuccessful.onGradesSuccessful(grades);
+            gradeInfo.setGrades(grades);
+            lsfRequestSuccessful.onGradeInfoSuccessful(gradeInfo);
         } else {
             failedToLogIn();
         }

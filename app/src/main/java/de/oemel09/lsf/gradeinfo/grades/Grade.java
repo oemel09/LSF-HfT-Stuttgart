@@ -1,8 +1,8 @@
-package de.oemel09.lsf.grades;
+package de.oemel09.lsf.gradeinfo.grades;
 
 import java.io.Serializable;
 
-import de.oemel09.lsf.grades.details.GradeDetails;
+import de.oemel09.lsf.gradeinfo.grades.details.GradeDetails;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -23,7 +23,7 @@
                 android:resource="@xml/searchable"/>
         </activity>
         <activity
-            android:name=".grades.details.GradeDetailsActivity">
+            android:name=".gradeinfo.grades.details.GradeDetailsActivity">
         </activity>
     </application>
 </manifest>

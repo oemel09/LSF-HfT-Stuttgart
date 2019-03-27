@@ -10,6 +10,10 @@
     <string name="result_login_failed">Anmeldung fehlgeschlagen</string>
     <string name="submit_value">Anmelden</string>
 
+    <string name="grade_info_total_average_label">Vorläufige Durchschnittsnote:</string>
+    <string name="grade_info_cp_base_courses_label">Erzielte CP im Grundstudium:</string>
+    <string name="grade_info_cp_main_courses_label">Erzielte CP im Hauptstudium:</string>
+
     <string name="table_grade">Note:</string>
     <string name="table_attempt">Versuch:</string>
     <string name="table_ects">ECTS:</string>
@@ -17,9 +21,9 @@
     <string name="table_date">Datum:</string>
 
     <string name="no_grade_details">Keine Details verfügbar.</string>
-    <string name="grade_details_grade_label">Deine Note</string>
-    <string name="grade_details_average_label">Durchschnitt</string>
-    <string name="grade_details_attendees_label">Teilnehmer</string>
+    <string name="grade_details_grade_label">Deine Note:</string>
+    <string name="grade_details_average_label">Durchschnitt:</string>
+    <string name="grade_details_attendees_label">Teilnehmer:</string>
 
     <string name="menu_search">Suche</string>
     <string name="menu_search_hint">Suche Klausuren</string>

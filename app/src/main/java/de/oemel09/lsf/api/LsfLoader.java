@@ -12,7 +12,7 @@ import de.oemel09.lsf.api.callback.LsfGradeDetailsCallback;
 import de.oemel09.lsf.api.callback.LsfGradesCallback;
 import de.oemel09.lsf.api.callback.LsfLoginCallback;
 import de.oemel09.lsf.api.listeners.LsfGradeDetailsSuccessful;
-import de.oemel09.lsf.api.listeners.LsfGradesSuccessful;
+import de.oemel09.lsf.api.listeners.LsfGradeInfoSuccessful;
 import de.oemel09.lsf.api.listeners.LsfRequestListener;
 
 public class LsfLoader {
@@ -21,7 +21,7 @@ public class LsfLoader {
     private LsfApi lsfApi;
 
     private LsfRequestListener lsfRequestListener;
-    private LsfGradesSuccessful lsfRequestSuccessful;
+    private LsfGradeInfoSuccessful lsfRequestSuccessful;
 
     private LsfLogin lsfLogin;
 
@@ -33,7 +33,7 @@ public class LsfLoader {
         this.lsfLogin = new LsfLogin(context);
     }
 
-    public void getGrades(LsfGradesSuccessful lsfRequestSuccessful1) {
+    public void getGrades(LsfGradeInfoSuccessful lsfRequestSuccessful1) {
         this.lsfRequestSuccessful = lsfRequestSuccessful1;
         lsfRequestListener.onRequestStart();
         if (lsfLogin.isCookieStillValid()) {

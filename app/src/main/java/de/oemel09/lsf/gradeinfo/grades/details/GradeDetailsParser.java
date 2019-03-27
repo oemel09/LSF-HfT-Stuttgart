@@ -1,4 +1,4 @@
-package de.oemel09.lsf.grades.details;
+package de.oemel09.lsf.gradeinfo.grades.details;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -8,13 +8,19 @@ import org.jsoup.select.Elements;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.oemel09.lsf.gradeinfo.grades.GradeParser.TABLE_BODY;
+import static de.oemel09.lsf.gradeinfo.grades.GradeParser.TABLE_DATA;
+import static de.oemel09.lsf.gradeinfo.grades.GradeParser.TABLE_ROW;
+
 public class GradeDetailsParser {
 
-    public GradeDetails parse(String content) throws NoDetailsException {
-        Document doc = Jsoup.parse(content);
+    private static final String INCLUSIVE = "inklusive";
+
+    public GradeDetails parse(String html) throws NoDetailsException {
+        Document doc = Jsoup.parse(html);
         try {
-            Element tableBody = doc.select("tbody").get(2);
-            Elements tableRows = tableBody.select("tr");
+            Element tableBody = doc.select(TABLE_BODY).get(2);
+            Elements tableRows = tableBody.select(TABLE_ROW);
             tableRows.subList(0, 3).clear();
             Integer[] amountOfPeopleInRange = extractAmountOfPeopleInRange(tableRows);
             int rangeOfGrade = getRangeOfGrade(tableRows);
@@ -30,20 +36,10 @@ public class GradeDetailsParser {
     private Integer[] extractAmountOfPeopleInRange(Elements tableRows) {
         Integer[] amountOfPeopleInRange = new Integer[5];
         for (int i = 0; i < 5; i++) {
-            String amountString = ((Element) tableRows.get(i).childNode(3)).text();
+            String amountString = tableRows.get(i).getElementsByTag(TABLE_DATA).get(1).text();
             amountOfPeopleInRange[i] = getAmount(amountString);
         }
         return amountOfPeopleInRange;
-    }
-
-    private int getRangeOfGrade(Elements tableRows) {
-        for (int i = 0; i < 5; i++) {
-            String amountString = ((Element) tableRows.get(i).childNode(3)).text();
-            if (amountString.contains("inklusive")) {
-                return i;
-            }
-        }
-        return 0;
     }
 
     private Integer getAmount(String amountString) {
@@ -54,5 +50,15 @@ public class GradeDetailsParser {
             amount = Integer.valueOf(matcher.group(1));
         }
         return amount;
+    }
+
+    private int getRangeOfGrade(Elements tableRows) {
+        for (int i = 0; i < 5; i++) {
+            String amountString = tableRows.get(i).getElementsByTag(TABLE_DATA).get(1).text();
+            if (amountString.contains(INCLUSIVE)) {
+                return i;
+            }
+        }
+        return 0;
     }
 }

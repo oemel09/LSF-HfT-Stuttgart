@@ -15,12 +15,11 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static de.oemel09.lsf.MainActivity.LOGGED_IN;
 import static de.oemel09.lsf.api.LsfApi.COOKIE;
 import static de.oemel09.lsf.api.LsfLogin.COOKIE_TIME;
 
 public class LsfLoginCallback extends LsfCallback {
-
-    private static final String LOGGED_IN = "LOGGED_IN";
 
     private SharedPreferences.Editor editor;
     private final LsfLoginSuccessful lsfLoginRequestSuccessful;

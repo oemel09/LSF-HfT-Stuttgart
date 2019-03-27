@@ -1,4 +1,4 @@
-package de.oemel09.lsf.grades.details;
+package de.oemel09.lsf.gradeinfo.grades.details;
 
 import java.io.Serializable;
 
