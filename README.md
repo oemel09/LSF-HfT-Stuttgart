@@ -3,3 +3,4 @@ Small app to access your grades without inserting your password every time and c
 
 # Download the apk here
 [Version 1.0](https://www.oemel09.de/downloads/LSF-App/LSF_1.0.apk)
+[Version with pull](https://www.oemel09.de/downloads/LSF-App/LSF_pull.apk)
