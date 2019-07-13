@@ -29,12 +29,12 @@ public class LsfLoader {
     public LsfLoader(Context context, LsfRequestListener lsfRequestListener) {
         this.context = context;
         this.lsfRequestListener = lsfRequestListener;
-        this.lsfApi = LsfApiClient.getLsfApi();
+        this.lsfApi = LsfApiClient.getLsfApi(context);
         this.lsfLogin = new LsfLogin(context);
     }
 
-    public void getGrades(LsfGradeInfoSuccessful lsfRequestSuccessful1) {
-        this.lsfRequestSuccessful = lsfRequestSuccessful1;
+    public void getGrades(LsfGradeInfoSuccessful lsfRequestSuccessful) {
+        this.lsfRequestSuccessful = lsfRequestSuccessful;
         lsfRequestListener.onRequestStart();
         if (lsfLogin.isCookieStillValid()) {
             loadGrades();

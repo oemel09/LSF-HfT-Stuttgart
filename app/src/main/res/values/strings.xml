@@ -27,4 +27,6 @@
 
     <string name="menu_search">Suche</string>
     <string name="menu_search_hint">Suche Klausuren</string>
+    <string name="domain">LSF-Domain</string>
+    <string name="https">https://</string>
 </resources>

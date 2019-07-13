@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements LsfRequestListene
         GradeAdapter.OnGradeClickListener, SearchView.OnQueryTextListener {
 
     public static final String LOGGED_IN = "LOGGED_IN";
+    public static final String DOMAIN = "DOMAIN";
     public static final String USERNAME = "USERNAME";
     public static final String PASSWORD = "PASSWORD";
     public static final String GRADE = "GRADE";
@@ -103,11 +104,14 @@ public class MainActivity extends AppCompatActivity implements LsfRequestListene
 
     private void setupLoginView() {
         setContentView(R.layout.login);
+        TextInputEditText etDomain = findViewById(R.id.et_domain);
         TextInputEditText etUsername = findViewById(R.id.et_username);
         TextInputEditText etPassword = findViewById(R.id.et_password);
 
-        fillOutUsername(etUsername);
+        fillOutLoginData(etDomain, etUsername);
         findViewById(R.id.btn_login).setOnClickListener(v -> {
+            String domain = validateDomain(Objects.requireNonNull(etDomain.getText()).toString());
+            editor.putString(DOMAIN, domain);
             editor.putString(USERNAME, Objects.requireNonNull(etUsername.getText()).toString());
             editor.putString(PASSWORD, Objects.requireNonNull(etPassword.getText()).toString());
             editor.apply();
@@ -115,7 +119,18 @@ public class MainActivity extends AppCompatActivity implements LsfRequestListene
         });
     }
 
-    private void fillOutUsername(TextInputEditText etUsername) {
+    private String validateDomain(String domain) {
+        if (domain == null) return "";
+        if (domain.endsWith("/")) {
+            domain = domain.substring(0, domain.length() - 1);
+        }
+        return domain;
+    }
+
+    private void fillOutLoginData(TextInputEditText etDomain, TextInputEditText etUsername) {
+        if (prefs.getString(DOMAIN, null) != null) {
+            etDomain.setText(prefs.getString(DOMAIN, null));
+        }
         if (prefs.getString(USERNAME, null) != null) {
             etUsername.setText(prefs.getString(USERNAME, null));
         }
