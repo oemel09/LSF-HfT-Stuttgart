@@ -29,4 +29,9 @@
     <string name="menu_search_hint">Suche Klausuren</string>
     <string name="domain">LSF-Domain</string>
     <string name="https">https://</string>
+    <string name="channel_description_info">Neue Noten sind verfügbar.</string>
+    <string name="error_login_failed">Login fehlgeschlagen.</string>
+    <string name="error_request_failed">Neue Noten konnten nicht abgefragt werden.</string>
+    <string name="result_new_grades_available">Es gibt neue Noten im LSF.</string>
+    <string name="result_no_new_grades_available">Leider wurden keine neuen Noten eingetragen.</string>
 </resources>

@@ -29,9 +29,13 @@ public class LsfGradesCallback extends LsfCallback {
         if (response.isSuccessful() && response.body() != null) {
             String content = responseToString(response.body());
             GradeInfo gradeInfo = new GradeInfoParser().parse(content);
-            ArrayList<Grade> grades = new ArrayList<>(new GradeParser().parse(content));
-            gradeInfo.setGrades(grades);
-            lsfRequestSuccessful.onGradeInfoSuccessful(gradeInfo);
+            if (gradeInfo == null) {
+                getLsfRequestListener().onRequestFailed();
+            } else {
+                ArrayList<Grade> grades = new ArrayList<>(new GradeParser().parse(content));
+                gradeInfo.setGrades(grades);
+                lsfRequestSuccessful.onGradeInfoSuccessful(gradeInfo);
+            }
         } else {
             failedToLogIn();
         }
