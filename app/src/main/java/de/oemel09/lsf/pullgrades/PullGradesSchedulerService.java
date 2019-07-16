@@ -36,8 +36,10 @@ public class PullGradesSchedulerService extends JobService implements LsfRequest
         lsfLoader.getGrades(gradeInfo -> {
             int oldAmountOfGrades = getOldAmountOfGrades();
             int newAmountOfGrades = gradeInfo.getGrades().size();
-            saveNewAmountOfGrades(newAmountOfGrades);
-            showNotification(newAmountOfGrades > oldAmountOfGrades);
+            if (newAmountOfGrades > oldAmountOfGrades) {
+                showNotification();
+                saveNewAmountOfGrades(newAmountOfGrades);
+            }
         });
     }
 
@@ -68,10 +70,8 @@ public class PullGradesSchedulerService extends JobService implements LsfRequest
         showNotificationCheckForGradesFailed(getString(R.string.error_login_failed));
     }
 
-    private void showNotification(boolean newGradeAvailable) {
-        String notificationText = newGradeAvailable
-                ? getString(R.string.result_new_grades_available)
-                : getString(R.string.result_no_new_grades_available);
+    private void showNotification() {
+        String notificationText = getString(R.string.result_new_grades_available);
         notificationHandler.showNotification(notificationText);
         jobFinished(params, false);
     }

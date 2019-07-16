@@ -38,6 +38,7 @@ public class NotificationHandler {
                 .setContentText(text)
                 .setSmallIcon(R.drawable.menu_ic_search)
                 .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
                 .build();
     }
 
