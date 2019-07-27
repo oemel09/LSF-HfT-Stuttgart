@@ -3,11 +3,15 @@ package de.oemel09.lsf;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +31,7 @@ import de.oemel09.lsf.gradeinfo.GradeInfo;
 import de.oemel09.lsf.gradeinfo.grades.Grade;
 import de.oemel09.lsf.gradeinfo.grades.GradeAdapter;
 import de.oemel09.lsf.gradeinfo.grades.details.GradeDetailsActivity;
+import de.oemel09.lsf.pullgrades.PullGradesSchedulerService;
 
 
 public class MainActivity extends AppCompatActivity implements LsfRequestListener,
@@ -37,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements LsfRequestListene
     public static final String USERNAME = "USERNAME";
     public static final String PASSWORD = "PASSWORD";
     public static final String GRADE = "GRADE";
+    private static final int JOB_ID = 1305;
 
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
@@ -78,6 +84,29 @@ public class MainActivity extends AppCompatActivity implements LsfRequestListene
             fillTextViews(gradeInfo);
             allGradesLoaded(gradeInfo.getGrades());
         });
+        schedulePullNewGrades();
+    }
+
+    private void schedulePullNewGrades() {
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        if (jobScheduler.getPendingJob(JOB_ID) == null) {
+            int resultCode = jobScheduler.schedule(createJobInfo());
+            if (resultCode == JobScheduler.RESULT_SUCCESS) {
+                Log.i("MainActivity", "Job scheduled.");
+            } else {
+                Log.e("MainActivity", "Failed to schedule job.");
+            }
+        }
+    }
+
+    private JobInfo createJobInfo() {
+        ComponentName componentName = new ComponentName(this, PullGradesSchedulerService.class);
+        int repeatInMillis = 30 * 60 * 1000;
+        return new JobInfo.Builder(JOB_ID, componentName)
+                .setPeriodic(repeatInMillis)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .build();
     }
 
     private void fillTextViews(GradeInfo gradeInfo) {
