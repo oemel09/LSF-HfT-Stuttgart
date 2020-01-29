@@ -27,7 +27,7 @@
         <activity
             android:name=".gradeinfo.grades.details.GradeDetailsActivity">
         </activity>
-        <service android:name=".pullgrades.PullGradesSchedulerService"
+        <service android:name=".poll.PollGradesSchedulerService"
                  android:permission="android.permission.BIND_JOB_SERVICE"
                  android:exported="true"/>
     </application>

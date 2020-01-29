@@ -1,5 +1,7 @@
 package de.oemel09.lsf.gradeinfo.grades;
 
+import android.util.Log;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -9,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class GradeParser {
+
+    private static final String TAG = GradeParser.class.getSimpleName();
 
     public static final String TABLE_BODY = "tbody";
     public static final String TABLE_ROW = "tr";
@@ -50,7 +54,7 @@ public class GradeParser {
                     .build();
             grades.add(grade);
         } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
+            Log.w(TAG, "addGrade: missing some value for: " + children.text());
         }
     }
 

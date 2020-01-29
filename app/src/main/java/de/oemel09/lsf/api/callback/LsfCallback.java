@@ -42,7 +42,7 @@ public class LsfCallback implements Callback<ResponseBody> {
     }
 
     void failedToLogIn() {
-        lsfRequestListener.onRequestFailed();
+        lsfRequestListener.onLoginFailed();
         Toast.makeText(context, context.getString(R.string.result_login_failed), Toast.LENGTH_SHORT).show();
     }
 

@@ -1,44 +1,48 @@
-package de.oemel09.lsf.pullgrades;
+package de.oemel09.lsf.poll;
 
 import android.app.job.JobParameters;
-import android.app.job.JobService;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import de.oemel09.lsf.R;
 import de.oemel09.lsf.api.LsfLoader;
 import de.oemel09.lsf.api.listeners.LsfRequestListener;
 import de.oemel09.lsf.notification.NotificationHandler;
 
-public class PullGradesSchedulerService extends JobService implements LsfRequestListener {
+public class PollGrades implements Runnable, LsfRequestListener {
+
+    private static final String TAG = PollGrades.class.getSimpleName();
 
     private static final String OLD_AMOUNT_OF_GRADES = "OLD_AMOUNT_OF_GRADES";
 
-    private JobParameters params;
-    private SharedPreferences prefs;
-    private NotificationHandler notificationHandler;
+    private final PollGradesSchedulerService schedulerService;
+    private final JobParameters params;
+    private final SharedPreferences prefs;
+    private final NotificationHandler notificationHandler;
 
-    @Override
-    public boolean onStartJob(JobParameters params) {
-        init(params);
-        loadAllGrades();
-        return true;
+    PollGrades(PollGradesSchedulerService pollGradesSchedulerService, JobParameters params) {
+        this.schedulerService = pollGradesSchedulerService;
+        this.params = params;
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(pollGradesSchedulerService);
+        this.notificationHandler = new NotificationHandler(pollGradesSchedulerService);
     }
 
-    private void init(JobParameters params) {
-        this.params = params;
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        notificationHandler = new NotificationHandler(this);
+    @Override
+    public void run() {
+        loadAllGrades();
     }
 
     private void loadAllGrades() {
-        LsfLoader lsfLoader = new LsfLoader(this, this);
+        LsfLoader lsfLoader = new LsfLoader(schedulerService, this);
         lsfLoader.getGrades(gradeInfo -> {
             int oldAmountOfGrades = getOldAmountOfGrades();
             int newAmountOfGrades = gradeInfo.getGrades().size();
             if (newAmountOfGrades > oldAmountOfGrades) {
                 showNotification();
                 saveNewAmountOfGrades(newAmountOfGrades);
+            } else {
+                Log.i(TAG, "loadAllGrades: no new grades online");
             }
         });
     }
@@ -52,32 +56,27 @@ public class PullGradesSchedulerService extends JobService implements LsfRequest
     }
 
     @Override
-    public boolean onStopJob(JobParameters params) {
-        return true;
-    }
-
-    @Override
     public void onRequestStart() {
     }
 
     @Override
     public void onRequestFailed() {
-        showNotificationCheckForGradesFailed(getString(R.string.error_request_failed));
+        showNotificationCheckForGradesFailed(schedulerService.getString(R.string.error_request_failed));
     }
 
     @Override
     public void onLoginFailed() {
-        showNotificationCheckForGradesFailed(getString(R.string.error_login_failed));
+        showNotificationCheckForGradesFailed(schedulerService.getString(R.string.error_login_failed));
     }
 
     private void showNotification() {
-        String notificationText = getString(R.string.result_new_grades_available);
+        String notificationText = schedulerService.getString(R.string.result_new_grades_available);
         notificationHandler.showNotification(notificationText);
-        jobFinished(params, false);
+        schedulerService.jobFinished(params, false);
     }
 
     private void showNotificationCheckForGradesFailed(String error) {
         notificationHandler.showNotification(error);
-        jobFinished(params, true);
+        schedulerService.jobFinished(params, true);
     }
 }

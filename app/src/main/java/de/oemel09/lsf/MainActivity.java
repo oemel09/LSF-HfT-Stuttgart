@@ -31,11 +31,13 @@ import de.oemel09.lsf.gradeinfo.GradeInfo;
 import de.oemel09.lsf.gradeinfo.grades.Grade;
 import de.oemel09.lsf.gradeinfo.grades.GradeAdapter;
 import de.oemel09.lsf.gradeinfo.grades.details.GradeDetailsActivity;
-import de.oemel09.lsf.pullgrades.PullGradesSchedulerService;
+import de.oemel09.lsf.poll.PollGradesSchedulerService;
 
 
 public class MainActivity extends AppCompatActivity implements LsfRequestListener,
         GradeAdapter.OnGradeClickListener, SearchView.OnQueryTextListener {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     public static final String LOGGED_IN = "LOGGED_IN";
     public static final String DOMAIN = "DOMAIN";
@@ -84,29 +86,6 @@ public class MainActivity extends AppCompatActivity implements LsfRequestListene
             fillTextViews(gradeInfo);
             allGradesLoaded(gradeInfo.getGrades());
         });
-        schedulePullNewGrades();
-    }
-
-    private void schedulePullNewGrades() {
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        if (jobScheduler.getPendingJob(JOB_ID) == null) {
-            int resultCode = jobScheduler.schedule(createJobInfo());
-            if (resultCode == JobScheduler.RESULT_SUCCESS) {
-                Log.i("MainActivity", "Job scheduled.");
-            } else {
-                Log.e("MainActivity", "Failed to schedule job.");
-            }
-        }
-    }
-
-    private JobInfo createJobInfo() {
-        ComponentName componentName = new ComponentName(this, PullGradesSchedulerService.class);
-        int repeatInMillis = 30 * 60 * 1000;
-        return new JobInfo.Builder(JOB_ID, componentName)
-                .setPeriodic(repeatInMillis)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPersisted(true)
-                .build();
     }
 
     private void fillTextViews(GradeInfo gradeInfo) {
@@ -231,5 +210,33 @@ public class MainActivity extends AppCompatActivity implements LsfRequestListene
     public boolean onQueryTextChange(String newText) {
         gradesAdapter.filter(newText);
         return true;
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        schedulePullNewGrades();
+    }
+
+    private void schedulePullNewGrades() {
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        if (jobScheduler.getPendingJob(JOB_ID) == null) {
+            int resultCode = jobScheduler.schedule(createJobInfo());
+            if (resultCode == JobScheduler.RESULT_SUCCESS) {
+                Log.i(TAG, "schedulePullNewGrades: Job scheduled.");
+            } else {
+                Log.e(TAG, "schedulePullNewGrades: Failed to schedule job.");
+            }
+        }
+    }
+
+    private JobInfo createJobInfo() {
+        ComponentName componentName = new ComponentName(this, PollGradesSchedulerService.class);
+        int repeatInMillis = 30 * 60 * 1000;
+        return new JobInfo.Builder(JOB_ID, componentName)
+                .setPeriodic(repeatInMillis)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .build();
     }
 }
